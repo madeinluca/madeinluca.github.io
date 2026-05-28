@@ -14,8 +14,8 @@
     <body>
         <!-- MindAR -->
         <a-scene    a-scene mindar-image="imageTargetSrc: ./targets.mind;
-                                          filterMinCF: 0.001;
-                                          filterBeta: 1000"
+                                          filterMinCF: 0.1;
+                                          filterBeta: 100"
                     color-space="sRGB"
                     renderer="colorManagement: true,
                         physicallyCorrectLights"
@@ -27,7 +27,7 @@
             <!-- ASSETS -->
             <a-assets>
                 <video id="seg01"
-                    src="/videos/CartometriasBrandasFILE-med-010200-9089.mp4"
+                    src="/videos/cartometrias-brandas-file-v1-seg01.mp4"
                     autoplay
                     loop="true"
                     loop="true"

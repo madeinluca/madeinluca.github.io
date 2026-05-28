@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+    <head>
+        <meta charset="utf-8">
+        <title>CARTOMETRIAS BRANDAS V3 (2026) - Grupo Realidades (CAP-ECA-USP)</title>
+        <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
+        <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+        <script src="https://unpkg.com/aframe-troika-text/dist/aframe-troika-text.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
+        <script src="/src/permissions.js"></script>
+        <script src="/src/stencil-logic.js"></script>
+        <script src="/src/table-generator.js"></script>
+        <script src="/src/point-of-interest-system.js"></script>
+        <link rel="stylesheet" href="styles.css">  
+        <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+    </head>
+
+    <body style="margin : 0px; overflow: hidden;">
+
+        <!-- UI DAS PERMISSÕES -->
+        <div id="camera-gate">
+            <div class="gate-content">
+                <h2>CARTOMETRIAS BRANDAS - v3 (2026)</h2>
+                <p>Para acessar o trabalho, permita acesso à câmera cliando no botão abaixo.</p>
+                <button id="start-btn" onclick="autorizarEIniciar()">Permitir acesso à câmera</button>
+            </div>
+        </div>
+        
+
+        <!-- SLIDER --> 
+
+        <div id="ui-container">
+            <div id="label-year">
+            Ano: <span id="yearDisplay">1987</span>
+            </div>
+
+            <label for="rotSlider"></label><br>
+            
+            <input type="range" id="rotSlider" min="1987" max="2024" value="1987" step="1" list="years-marks">
+
+            <datalist id="years-marks">
+            <option value="1987"></option>
+            <option value="1995"></option>
+            <option value="2005"></option>
+            <option value="2015"></option>
+            <option value="2024"></option>
+            </datalist>
+        </div>
+
+        <!-- GRÁFICO -->
+        <div id="graph-container">
+            <button id="graph-close-btn" onclick="closeGraph()">⏺</button>
+            <canvas id="chart"></canvas>
+        </div>
+
+
+        <!-- CENA AR.JS -->
+        <a-scene    embedded arjs="detectionMode: mono_and_matrix;
+                    matrixCodeType: 4x4_BCH_13_5_5"
+                    
+                    custom-cursor
+                    
+                    raycaster="objects: .clickable"
+                    xr-mode-ui="enabled: false"
+                    renderer="stencil: true;
+                    logarithmicDepthBuffer: true;
+                    precision: high">
+
+            <!-- ASSETS -->
+            <a-assets>
+                <video id="video" src="videos/DayNightCycle-1-v06-4k.mp4" autoplay="true"></video>
+
+                <video id="abstractVideo" src="videos/DayNightCycle-2-v06-4k.mp4" autoplay="true"></video>
+
+                <a-asset-item id="tower" src="models/Torre-v003.glb"></a-asset-item>
+
+                <a-asset-item id="lines" src="models/Linhas-v003.glb"></a-asset-item>
+
+                <a-asset-item id="base" src="models/Base-v004.glb"></a-asset-item>
+
+                <a-asset-item id="base2" src="models/Base-v004-2.glb"></a-asset-item>
+
+                <a-asset-item id="ponteiro1" src="models/Ponteiro-v003-1.glb"></a-asset-item>
+                        
+            </a-assets>
+
+            <!-- PARTE DA CENA QUE SEGUE O MARCADOR (basicamente tudo) -->
+            <a-marker type="barcode" value="5">
+
+                <!-- SISTEMA ANTIGO DE GRÁFICOS
+                <a-entity   gerador-graficos="distancia: 50;
+                            escalaAltura: 1;
+                            altura: -28;
+                            spacing: 0.05;
+                            graphWidth: 1.5"
+                            stencil-logic="type: content;
+                            order: 4">
+                </a-entity> -->
+
+                <!-- THE DEBUG DINOSSAUR (tm) - "it roars to flee the bugs away"
+                <a-entity
+                    position="0 0 0"
+                    scale="0.05 0.05 0.05"
+                    gltf-model="https://raw.githack.com/AR-js-org/AR.js/master/aframe/examples/image-tracking/nft/trex/scene.gltf"
+                ></a-entity>
+                -->
+
+                <!-- O MARCADOR FICA NA FACE SUPERIOR DESTE CUBO INVISÍVEL
+                <a-box position="0 -0.5 0" color="red"></a-box> -->
+
+                <a-entity   gltf-model="#base"
+                            scale="0.5 0.5 0.5"
+                            position="0 0 0"
+                            material="shader: flat"
+                            stencil-logic-inverted="type: content; order: 6">        
+                </a-entity>
+
+                <a-box  id="clickableCube"
+                        class="clickable"
+                        position="5 0 0"
+                        scale="1 1 1"
+                        poi-handler
+                        stencil-logic="type: content; order: 6"
+                        >
+
+                </a-box>
+
+                
+                <!-- VIDEOSPHERES -->
+
+                <a-videosphere  src="#video"
+                                material="shader: flat"
+                                segments-width="32"
+                                segments-height="16"
+                                radius="500">
+
+                </a-videosphere>
+                
+                <a-videosphere  src="#abstractVideo"
+                                material="shader: flat"
+                                stencil-logic="type: content;
+                                order: 4"
+                                segments-width="32"
+                                segments-height="16"
+                                radius="500">
+
+                </a-videosphere>
+
+
+                <!-- TORRE E FUNDO -->
+                    
+                <a-entity   gltf-model="#tower"
+                            scale="0.5 0.5 0.5"
+                            position="0 0 0"
+                            material="shader: flat"
+                            stencil-logic="type: mask; order: 3">        
+                </a-entity>
+                    
+                    
+                <a-entity   gltf-model="#lines"
+                            scale="0.5 0.5 0.5"
+                            position="0 0 0"
+                            material="shader: flat"
+                            color="#26302e">        
+                </a-entity>
+
+                    
+                <a-entity   id="clock1H"
+                            gltf-model="#ponteiro1"
+                            scale="0.5 0.5 0.5"
+                            position="0 4.740 0.25"
+                            material="shader: flat"
+                            rotation="180 0 0">        
+                </a-entity>
+
+                <a-entity   id="clock2H"
+                            gltf-model="#ponteiro1"
+                            scale="0.5 0.5 0.5"
+                            material="shader: flat"
+                            position="0 4.740 -0.25">        
+                </a-entity>
+
+                
+                <a-entity   gltf-model="#base2"
+                            scale="0.5 0.5 0.5"
+                            position="0 0 0"
+                            material="shader: flat"
+                            stencil-logic="type: content; order: 4">        
+                </a-entity>
+                
+
+                <!-- ILUMINAÇÃO 
+                 
+                <a-light    type="point"
+                            color="white"
+                            position="1 2 3"
+                            castShadow="false"
+                            distance="100">
+                </a-light> -->
+                
+                <a-light    type="ambient"
+                            color="#FFF"
+                            intensity="0.7">
+                </a-light>
+
+                <!--
+                <a-light    type="point"
+                            color="white"
+                            intensity="0.2"
+                            position="-1 3 -2">
+                </a-light>
+                -->
+
+
+
+            </a-marker>
+
+            <!-- CÂMERA - basicamente a única coisa que não segue o marcador -->
+            <a-entity id="arjs-camera" camera camerafix="false"></a-entity>
+
+        </a-scene>
+
+    </body>
+
+    <script>
+        const slider = document.getElementById('rotSlider');
+        const yearDisplay = document.getElementById('yearDisplay');
+        const clockH1 = document.getElementById('clock1H');
+        const clockH2 = document.getElementById('clock2H');
+
+        var videoEl = document.querySelector('#video');
+        var abstractyVideoEl = document.querySelector('#abstractVideo');
+
+        videoEl.pause();
+        abstractyVideoEl.pause();
+
+        slider.addEventListener('input', (event) => {
+            const year = parseInt(event.target.value);
+
+            // Atualiza o texto da tela
+            yearDisplay.innerText = year;
+
+            // Proporcionalidade:
+            const minYear = 1987;
+            const maxYear = 2024;
+            const frameNumber = ((year - minYear) / (maxYear - minYear)) * 72;
+            const hour = ((year - minYear) / (maxYear - minYear)) * 360;
+
+            clockH1.object3D.rotation.z = THREE.MathUtils.degToRad(hour);
+            clockH2.object3D.rotation.z = THREE.MathUtils.degToRad(hour + 180);
+
+            //console.log(frameNumber);
+            videoEl.currentTime = frameNumber / 24;
+            abstractyVideoEl.currentTime = frameNumber /24;    
+        });
+        
+        const ctx = document.getElementById('chart');
+         
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+            labels: ['Docentes', 'Técnicos', 'Alunos'],
+            datasets: [{
+                label: 'Número',
+                data: [12, 19, 3, 5, 2, 3],
+                borderWidth: 1
+            }]
+            },
+            options: {
+                scales: {
+                    y: {
+                    beginAtZero: true
+                    }
+                },
+                layout: {
+                    padding: {
+                        bottom: 0
+                    }
+                }
+                
+                /*,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'ECA',
+                        position: 'bottom',
+                        padding: 5
+                    }
+                }
+                    */
+            }
+        });
+
+        
+    </script>
+</html>

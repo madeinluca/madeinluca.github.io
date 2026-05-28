@@ -1,8 +1,11 @@
 AFRAME.registerComponent('sync-video-hls', {
     init: function () {
-        const video = document.querySelector('#video-textura');
+        const video = document.querySelector('#video');
         // Caminho para o seu arquivo de índice gerado pelo FFmpeg
         const videoSrc = '/videos/stream.m3u8';
+
+        // Marcador de AR
+        const marker = this.el.closest('a-marker');
 
         // 1. SE FOR ANDROID / PC (Usa a biblioteca hls.js)
         if (Hls.isSupported()) {
@@ -20,10 +23,25 @@ AFRAME.registerComponent('sync-video-hls', {
                 this.sincronizeVideo(video);
             });
         }
+
+        if (marker) {
+            // Quando o celular avistar o marcador: sincroniza o tempo e dá play
+            marker.addEventListener('markerFound', () => {
+                console.log("Marcador encontrado! Ativando vídeo.");
+                this.sincronizeVideo(video);
+            });
+
+            // Quando o marcador sumir: pausa o vídeo imediatamente
+            marker.addEventListener('markerLost', () => {
+                console.log("Marcador perdido. Pausando vídeo para poupar CPU.");
+                video.pause();
+            });
+        }
     },
 
     sincronizeVideo: function (video) {
-        const videoDurationInSeconds = video.duration;
+        const videoDurationInSeconds = 370; //Tive que colocar a duração por extenso, pois video.duration não funciona
+        // #TO-DO: verificar se o hls.js tem um comando para detectar duração do vídeo em segundos
 
         const now = new Date();
         const hours = now.getHours();

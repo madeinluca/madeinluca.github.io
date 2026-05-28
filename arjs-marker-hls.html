@@ -6,7 +6,9 @@
         <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
         <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/hls.js@1.4.0/dist/hls.min.js"></script>
         <script src="/src/video-timing.js"></script>
+        <script src="/src/sync-video-hls.js"></script>
         <link rel="stylesheet" href="styles.css">  
         <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
     </head>
@@ -20,13 +22,7 @@
 
             <!-- ASSETS -->
             <a-assets>
-                <video id="seg01"
-                    src="/videos/CartometriasBrandasFILE-med-010200-9089.mp4"
-                    autoplay
-                    loop="true"
-                    loop="true"
-                    muted="true">
-                </video>
+                
             </a-assets>
         
             <!-- CENA 3D -->
@@ -34,7 +30,7 @@
 
                 <a-box  id="cube"
                         position="0 0.5 0"
-                        material="src: #seg01;
+                        material="src: #video;
                                     repeat: 1"
                         sync-video-hls>
                 </a-box>
@@ -46,5 +42,15 @@
             <!-- CÂMERA -->
             <a-entity id="arjs-camera" camera camerafix="false"></a-entity>
         
+            <!-- VÍDEO -->
+            <video  id="video"
+                    preload="auto"
+                    loop="true" muted="true"
+                    playsinline
+                    webkit-playsinline 
+                    crossorigin="anonymous"
+                    style="display:none;">
+            </video>
+
         </a-scene>
     </body>
