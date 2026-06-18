@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+    <head>
+        <meta charset="utf-8">
+        <title>Visualizador AR de Maçãs</title>
+        <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
+        <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+        <script src="texture-changer.js"></script>
+        <link rel="stylesheet" href="styles.css">  
+        <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+    </head>
+
+    <body style="margin : 0px; overflow: hidden;">
+
+        <button id="change-texture-btn">></button>
+
+        <!-- AR.JS -->
+        <a-scene    embedded arjs="detectionMode: mono_and_matrix;
+                    matrixCodeType: 4x4_BCH_13_5_5"
+                    xr-mode-ui="enabled: false"
+                    stats>
+
+            <!-- ASSETS -->
+            <a-assets>
+                <a-asset-item id="model" src="Apple-3D-model-v001.obj"></a-asset-item>
+            </a-assets>
+        
+            <!-- CENA 3D -->
+            <a-marker type="barcode" value="5">
+ 
+                <a-entity  id="apple"
+                        obj-model="obj: #model"
+                        position="0 0.5 0"
+                        rotation="0 0 0"
+                        scale="0.5 0.5 0.5"
+                        >
+                </a-entity>
+
+                <!-- LIGHTING -->
+                <a-entity light="type: ambient; color: #BBB"></a-entity>
+
+                <a-entity   light="type: point"
+                            position="1 1.5 2"
+                            intensity="1.0"
+                            color="#FFF">
+                </a-entity>
+
+            </a-marker>
+
+            <!-- CÂMERA -->
+            <a-entity id="arjs-camera" camera></a-entity>
+
+        </a-scene>
+    </body>
+
+    
